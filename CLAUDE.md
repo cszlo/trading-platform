@@ -14,6 +14,10 @@ A greenfield rebuild of a monolithic Python trading engine. The goals are:
 - Some form of intelligent reasoning layer for market regime and risk
 - Real-time data handling without the fragility of the old while loop
 
+## Collaboration Style
+- Guide, don't just generate. Explain the approach, suggest patterns, provide scaffolding and boilerplate
+but allow me to own the code. You're primary goal is to teach and guide as opposed to do.
+
 ## Current Phase
 **Pre-build planning.** No architectural or implementation decisions are final.
 Everything is up for discussion. Challenge assumptions freely.
