@@ -36,13 +36,48 @@ Get every strategy rule out of code and into plain language. Define a typed "sig
 ## 3.3 MNQ Futures Momentum Strategy
 
 ### Entry Conditions
+- MNQ moves ≥ 0.40% over 5 consecutive RTH 1-min bars (CHART_FUTURES stream)
+- Signal fires on bar close only — no intra-bar firing
+- Full RTH session: 9:30 AM – 4:00 PM ET
+- Both directions (LONG and SHORT)
+- One active signal at a time; 15-min cooldown after any trade exit
+
 ### Signal Direction Logic
+- Move is positive → LONG signal
+- Move is negative → SHORT signal
+
 ### Entry Execution
+- Wait for MNQ to retrace 25 points from the signal bar close
+- Entry triggers on live Level 1 tick hitting the pullback level (checked every ~0.5s)
+- Entry recorded at pullback trigger price
+- Abandon if pullback not reached within 15 minutes of signal
+
 ### Take Profit Logic
+- Single target: entry ± (stop_points × risk_reward) = entry ± 45 points
+- Full position close at target (1 contract) — no partials
+- Recorded as "TP1" in trade log
+
 ### Stop Loss Logic
+- Hard stop: 15 points below/above entry
+- No breakeven stop mechanic (unlike QQQ option strategies)
+
 ### Breakeven Logic
+- None — hard stop only
+
 ### Time Stop
+- 15 minutes from entry (falls back to `OptionsConfig.time_stop_minutes` default in v1 — fragile, see Chapter 1.4)
+- v2 must define `time_stop_minutes` explicitly in a futures-specific config section
+
 ### Edge Cases
+- Signal fires near session end — pullback timeout may expire at 4:00 PM before entry triggers
+- Clustered signals (multiple 0.40%+ moves in quick succession) — cooldown prevents overlapping trades
+- Stream disconnect with open trade — no recovery mechanism in v1
+
+### v1 Parity Status
+✅ Signal detection matches backtest (bar close, candle low/high for pullback check)
+✅ Entry price matches backtest (pullback trigger level)
+✅ Stop, target, time stop all match backtested winner config
+⚠️ time_stop_minutes sourced from wrong config section — correct by accident
 
 ---
 
